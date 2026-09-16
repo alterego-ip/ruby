@@ -1,12 +1,17 @@
-print "Введіть натуральне число: "
-input = gets.chomp
+name = "Данило Бурмей"
+puts "Привіт, #{name}!"
 
-digits = input.scan(/\d/)
+result = (1000..9999).find do |num|
+  last_digit = num % 10
+  remaining_digits = num / 10
+  new_num = (last_digit.to_s + remaining_digits.to_s).to_i
 
-if digits.empty?
-  puts "Помилка: не знайдено жодної цифри."
+  last_digit != 0 && (num - new_num == 27)
+end
+
+if result
+  new_val = (result % 10).to_s + (result / 10).to_s
+  puts "Знайдене число: #{result} (після перестановки: #{new_val}, різниця: #{result - new_val.to_i})"
 else
-  sum = digits.map(&:to_i).sum
-  puts "Введене число: #{input}"
-  puts "Сума його цифр: #{sum}"
+  puts "Число не знайдено"
 end

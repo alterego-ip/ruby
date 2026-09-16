@@ -1,14 +1,15 @@
-target_number = 600851475143
-n = target_number
-factor = 2
+name = "Данило Бурмей"
+puts "Привіт, #{name}!"
 
-while factor * factor <= n
-  if n % factor == 0
-    n /= factor
-  else
-    factor += 1
-  end
+print "Введіть натуральне число: "
+input = gets.chomp
+digits = input.scan(/\d/).map(&:to_i)
+
+if digits.empty?
+  puts "Помилка: не введено жодної цифри."
+else
+  max_digit = digits.max
+  count = digits.count(max_digit)
+  puts "Максимальна цифра: #{max_digit}"
+  puts "Кількість входжень: #{count}"
 end
-
-puts "Початкове число: #{target_number}"
-puts "Найбільший простий множник: #{n}"
