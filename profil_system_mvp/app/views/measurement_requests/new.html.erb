@@ -1,0 +1,26 @@
+<div class="max-w-xl mx-auto space-y-6">
+  <div class="border-b-2 border-zinc-200 pb-3">
+    <span class="text-[11px] font-bold uppercase tracking-widest text-amber-600">Use Case 4 (SRS)</span>
+    <h1 class="text-2xl font-black uppercase tracking-tight">Заявка на виклик замірника</h1>
+  </div>
+
+  <%= form_with model: @request, class: "bg-white border-2 border-zinc-200 p-6 space-y-4" do |f| %>
+    <div>
+      <%= f.label :client_name, "Ваше ім'я та прізвище", class: "block text-xs font-bold uppercase text-zinc-700 mb-1" %>
+      <%= f.text_field :client_name, required: true, class: "w-full border-2 border-zinc-200 p-2 text-xs" %>
+    </div>
+    <div>
+      <%= f.label :phone, "Номер телефону", class: "block text-xs font-bold uppercase text-zinc-700 mb-1" %>
+      <%= f.text_field :phone, required: true, placeholder: "+380...", class: "w-full border-2 border-zinc-200 p-2 text-xs" %>
+    </div>
+    <div>
+      <%= f.label :address, "Адреса об'єкта", class: "block text-xs font-bold uppercase text-zinc-700 mb-1" %>
+      <%= f.text_field :address, required: true, placeholder: "вул. Галицька, 20", class: "w-full border-2 border-zinc-200 p-2 text-xs" %>
+    </div>
+    <div>
+      <%= f.label :preferred_date, "Бажана дата заміру", class: "block text-xs font-bold uppercase text-zinc-700 mb-1" %>
+      <%= f.date_field :preferred_date, required: true, class: "w-full border-2 border-zinc-200 p-2 text-xs" %>
+    </div>
+    <%= f.submit "Відправити заявку на замір", class: "w-full bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-bold uppercase py-3 cursor-pointer" %>
+  <% end %>
+</div>

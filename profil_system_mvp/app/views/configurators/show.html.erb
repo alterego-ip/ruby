@@ -1,0 +1,85 @@
+<div class="max-w-4xl mx-auto space-y-6">
+  <div class="border-b-2 border-zinc-200 pb-3">
+    <span class="text-[11px] font-bold uppercase tracking-widest text-amber-600">FR-CORE-02: Динамічний розрахунок</span>
+    <h1 class="text-2xl font-black uppercase tracking-tight">Параметричний конфігуратор вікон</h1>
+  </div>
+
+  <%= form_with url: configurator_add_to_cart_path, method: :post, class: "grid grid-cols-1 lg:grid-cols-3 gap-6" do |f| %>
+    <div class="lg:col-span-2 bg-white border-2 border-zinc-200 p-6 space-y-4">
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <%= f.label :width, "Ширина (мм)", class: "block text-xs font-bold uppercase text-zinc-700 mb-1" %>
+          <%= f.number_field :width, value: @default_params[:width], min: 400, max: 3000, id: "c-width", class: "w-full border-2 border-zinc-200 p-2 font-mono-num text-sm" %>
+        </div>
+        <div>
+          <%= f.label :height, "Висота (мм)", class: "block text-xs font-bold uppercase text-zinc-700 mb-1" %>
+          <%= f.number_field :height, value: @default_params[:height], min: 400, max: 2800, id: "c-height", class: "w-full border-2 border-zinc-200 p-2 font-mono-num text-sm" %>
+        </div>
+      </div>
+
+      <div>
+        <%= f.label :profile_system, "Профільна система", class: "block text-xs font-bold uppercase text-zinc-700 mb-1" %>
+        <%= f.select :profile_system, [["Rehau Euro 70 (70 мм)", "rehau_70"], ["Rehau Euro 60 (60 мм)", "rehau_60"], ["Salamander bluEvolution", "salamander"], ["WDS 500 Classic", "wds_500"]], { selected: @default_params[:profile_system] }, id: "c-profile", class: "w-full border-2 border-zinc-200 p-2 text-xs bg-white" %>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <%= f.label :glass_type, "Склопакет", class: "block text-xs font-bold uppercase text-zinc-700 mb-1" %>
+          <%= f.select :glass_type, [["Двокамерний", "double"], ["Енергоощадний", "energy_saver"], ["Однокамерний", "single"]], { selected: @default_params[:glass_type] }, id: "c-glass", class: "w-full border-2 border-zinc-200 p-2 text-xs bg-white" %>
+        </div>
+        <div>
+          <%= f.label :hardware, "Фурнітура", class: "block text-xs font-bold uppercase text-zinc-700 mb-1" %>
+          <%= f.select :hardware, [["Siegenia Titan", "siegenia"], ["Roto NX", "roto"], ["Axor Komfort", "axor"]], { selected: @default_params[:hardware] }, id: "c-hardware", class: "w-full border-2 border-zinc-200 p-2 text-xs bg-white" %>
+        </div>
+      </div>
+
+      <div class="pt-2 flex items-center gap-2">
+        <%= f.check_box :with_installation, { checked: true, id: "c-install", class: "w-4 h-4" } %>
+        <%= f.label :with_installation, "Монтаж конструкції за ДСТУ (+20%)", class: "text-xs font-bold uppercase" %>
+      </div>
+    </div>
+
+    <div class="bg-zinc-900 text-white p-6 border-t-4 border-amber-500 flex flex-col justify-between">
+      <div>
+        <span class="text-[10px] uppercase font-bold tracking-widest text-zinc-400">Попередній кошторис</span>
+        <h3 class="text-sm font-bold uppercase tracking-wider text-zinc-200 mt-1 pb-3 border-b border-zinc-800">Вартість з ПДВ</h3>
+        <div id="price-target" class="text-3xl font-black font-mono-num text-white my-6">
+          <%= number_to_currency(@initial_price, unit: "грн", format: "%n %u") %>
+        </div>
+      </div>
+      <%= f.submit "Додати в кошик", class: "w-full bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold uppercase py-3 cursor-pointer" %>
+    </div>
+  <% end %>
+</div>
+
+<script>
+  (function() {
+    function recalc() {
+      const token = document.querySelector('meta[name="csrf-token"]')?.content;
+      const data = {
+        width: document.getElementById("c-width")?.value,
+        height: document.getElementById("c-height")?.value,
+        profile_system: document.getElementById("c-profile")?.value,
+        glass_type: document.getElementById("c-glass")?.value,
+        hardware: document.getElementById("c-hardware")?.value,
+        with_installation: document.getElementById("c-install")?.checked ? "1" : "0"
+      };
+
+      fetch("/configurator/calculate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-CSRF-Token": token },
+        body: JSON.stringify(data)
+      })
+      .then(r => r.json())
+      .then(res => {
+        const el = document.getElementById("price-target");
+        if (el) el.textContent = Number(res.price).toLocaleString("uk-UA", { minimumFractionDigits: 2 }) + " грн";
+      });
+    }
+
+    ["c-width", "c-height", "c-profile", "c-glass", "c-hardware", "c-install"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener("input", recalc);
+    });
+  })();
+</script>

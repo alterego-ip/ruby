@@ -1,0 +1,39 @@
+<div class="max-w-4xl mx-auto space-y-6">
+  <div class="border-b-2 border-zinc-200 pb-3 flex justify-between items-end">
+    <h1 class="text-2xl font-black uppercase tracking-tight">Кошик замовлень</h1>
+    <span class="text-xs font-mono-num text-zinc-500">Позицій: <%= @cart_items.count %></span>
+  </div>
+
+  <% if @cart_items.any? %>
+    <div class="bg-white border-2 border-zinc-200 divide-y divide-zinc-200">
+      <% @cart_items.each do |item| %>
+        <div class="p-4 flex justify-between items-center">
+          <div>
+            <div class="font-bold text-sm text-zinc-900"><%= item.title %></div>
+            <% if item.configuration_details.present? %>
+              <div class="text-[11px] font-mono-num text-zinc-500">
+                Параметри: <%= item.configuration_details["width"] %>x<%= item.configuration_details["height"] %> мм,
+                <%= item.configuration_details["profile"] %>
+              </div>
+            <% end %>
+          </div>
+          <div class="flex items-center gap-4">
+            <span class="font-black font-mono-num text-base"><%= number_to_currency(item.price, unit: "грн", format: "%n %u") %></span>
+            <%= button_to "Видалити", cart_item_path(item), method: :delete, class: "text-rose-600 text-xs font-bold uppercase hover:underline" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="bg-zinc-900 text-white p-5 flex justify-between items-center">
+      <div class="text-sm font-bold uppercase">Загальна сума до сплати:</div>
+      <div class="text-2xl font-black font-mono-num text-amber-400">
+        <%= number_to_currency(@total_sum, unit: "грн", format: "%n %u") %>
+      </div>
+    </div>
+  <% else %>
+    <div class="p-8 text-center bg-white border-2 border-zinc-200 text-zinc-500 text-xs font-bold uppercase">
+      Кошик порожній. Перейдіть до каталогу або калькулятора.
+    </div>
+  <% end %>
+</div>
